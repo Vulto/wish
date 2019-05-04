@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+# Name: WISH = Wifi Shell
+#
+# Description: This program allows you to connect to the wifi using just iw, ip command and
+# wpa_ supplicant/wpa_passphrase into terminal.
+# 
+# Dependencies: iw , wpa_supplicant , dhclient
+#
+#==============================================================================================================================================
+#
+# Getting information
+#
+# iw dev 				         						# Show the interface name and more
+#
+# ip link show  wls3 | awk '{print$2}{print$9}' 						# Check that the wireless dev is up
+#
+# ip link set wls3 up										# UP the wireless device
+#
+# iw wls3 link 					 						# Check the connection status
+#
+# iw wls3 scan | grep SSID | awk '{print$2 | dmenu -p "wifi" -l 10  				# List available SSID NAMES
+#
+# wpa_passphrase $FSA >> ~/.config/wifi/FSA 							# It will ask for a PASSWD to Gen a wifi file
+#
+# wpa_supplicant -B -D wext -i wls3 -c ~/.config/wifi/FSA					# Connect to WIFI
+#
+# iw wls3 link 											# Check the connection again
+#
+# sudo dhclient wls3 										# Obtain IP address by dhcp
+# 
+# ip addr show wls3 										# show the IP obtained by dhcp
+#
+#=============================================================================================================================================
+#
+# Variables
+#
+DEVICE=$(iw dev | grep Interface | awk '{print$2}')
+
+DEVICE_STATUS="$(ip link show $DEVICE | awk '{print$2}{print$9}')"
+
+WIFI_STATUS="iw $DEVICE link"
+
+SSID_LIST="iw $DEVICE scan | grep SSID | awk '{print$2}'"
+
+IP="ip addr show  | grep inet | tail -2 | awk '{print$2}'| grep 192"
+#
+#=============================================================================================================================================
+if [ -d $HOME/wifi ]
+then
+	echo ""
+else
+	mkdir "$HOME"/wifi
+fi
+sudo rfkill unblock wifi
+sudo iw $DEVICE scan | grep SSID | awk '{print$2}'
+sleep 1 
+echo -e \\n "Type an SSID"
+read SSID
+if [ -f $HOME/wifi/$SSID ]
+then 
+	sudo wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+else
+	echo "Type a password" ; sudo  wpa_passphrase $SSID >> $HOME/wifi/$SSID ; sudo wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+fi
+sudo dhclient $DEVICE ; sudo xsetroot -name "Connected to $SSID"
