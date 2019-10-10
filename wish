@@ -2,7 +2,7 @@
 #
 # Name: WISH = Wifi Shell
 #
-# Description: This program allows you to connect to the wifi using just iw, ip command and
+# Description: This program allows you to connect to the wifi using iw, ip command and
 # wpa_ supplicant/wpa_passphrase into terminal.
 # 
 # Dependencies: iw , wpa_supplicant , dhclient
