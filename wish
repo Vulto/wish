@@ -43,7 +43,7 @@ WIFI_STATUS="iw $DEVICE link"
 
 SSID_LIST="iw $DEVICE scan | grep SSID | awk '{print$2}'"
 
-IP="ip addr show  | grep inet | tail -2 | awk '{print$2}'| grep 192"
+IP="ip addr | grep 192 | awk '{print$2}'|"
 #
 #=============================================================================================================================================
 if [ -d $HOME/wifi ]
