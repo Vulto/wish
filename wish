@@ -52,15 +52,15 @@ then
 else
 	mkdir "$HOME"/wifi
 fi
-sudo rfkill unblock wifi
-sudo iw $DEVICE scan | grep SSID | awk '{print$2}'
+rfkill unblock wifi
+iw $DEVICE scan | grep SSID | awk '{print$2}'
 sleep 1 
 echo -e \\n "Type an SSID"
 read SSID
 if [ -f $HOME/wifi/$SSID ]
 then 
-	sudo wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+	wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
 else
 	echo "Type a password" ; sudo  wpa_passphrase $SSID >> $HOME/wifi/$SSID ; sudo wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
 fi
-sudo dhclient $DEVICE ; sudo xsetroot -name "Connected to $SSID"
+dhclient $DEVICE
