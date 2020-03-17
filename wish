@@ -21,46 +21,48 @@
 #
 # iw wls3 scan | grep SSID | awk '{print$2 | dmenu -p "wifi" -l 10  				# List available SSID NAMES
 #
-# wpa_passphrase $FSA >> ~/.config/wifi/FSA 							# It will ask for a PASSWD to Gen a wifi file
+# wpa_passphrase $WIFI >> ~/.config/wifi/FSA 							# It will ask for a PASSWD to Gen a wifi file
 #
 # wpa_supplicant -B -D wext -i wls3 -c ~/.config/wifi/FSA					# Connect to WIFI
 #
 # iw wls3 link 											# Check the connection again
 #
-# sudo dhclient wls3 										# Obtain IP address by dhcp
+# dhclient $DEVICE 										# Obtain IP address by dhcp
 # 
-# ip addr show wls3 										# show the IP obtained by dhcp
+# ip addr show $DEVICE 										# show the IP obtained by dhcp
 #
 #=============================================================================================================================================
 #
 # Variables
-#
-DEVICE=$(iw dev | grep Interface | awk '{print$2}')
 
-DEVICE_STATUS="$(ip link show $DEVICE | awk '{print$2}{print$9}')"
+DEVICE=$(iw dev | grep Interface | awk '{print$2}') #BLOATED
+
+DEVICE_STATUS="ip link show $DEVICE | awk '{print$2}{print$9}'"
 
 WIFI_STATUS="iw $DEVICE link"
 
-SSID_LIST="iw $DEVICE scan | grep SSID | awk '{print$2}'"
+SSID_LIST="iw ($DEVICE) scan | grep SSID | awk '{print$2}'"
 
-IP="ip addr | grep 192 | awk '{print$2}'|"
-#
+IP="ip addr | grep 192 | awk '{print$2}'|" # bloated
+
 #=============================================================================================================================================
 if [ -d $HOME/wifi ]
-then
-	echo ""
-else
-	mkdir "$HOME"/wifi
+  then
+    echo ""
+  else
+    mkdir "$HOME"/wifi
 fi
-rfkill unblock wifi
-iw $DEVICE scan | grep SSID | awk '{print$2}'
+rfkill unblock wifi 
+iw $DEVICE scan | grep SSID | awk '{print$2}' # bloated
 sleep 1 
 echo -e \\n "Type an SSID"
 read SSID
 if [ -f $HOME/wifi/$SSID ]
-then 
-	wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
-else
-	echo "Type a password" ; sudo  wpa_passphrase $SSID >> $HOME/wifi/$SSID ; sudo wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+  then 
+    wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+  else
+    echo "Type a password" 
+    wpa_passphrase $SSID >> $HOME/wifi/$SSID 
+    wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
 fi
-dhclient $DEVICE
+  dhclient $DEVICE
