@@ -35,34 +35,21 @@
 #
 # Variables
 
-DEVICE=$(iw dev | grep Interface | awk '{print$2}') #BLOATED
-
-DEVICE_STATUS="ip link show $DEVICE | awk '{print$2}{print$9}'"
-
+DEVICE="$(iw dev | grep Interface | awk '{print$2}')"
 WIFI_STATUS="iw $DEVICE link"
-
+INTERNET_STATUS="$(cat "/sys/class/net/($DEVICE)/operstate")"
 SSID_LIST="iw ($DEVICE) scan | grep SSID | awk '{print$2}'"
-
 IP="ip addr | grep 192 | awk '{print$2}'|" # bloated
-
+wpas="wpa_supplicant -B -D wext -i"
 #=============================================================================================================================================
-if [ -d $HOME/wifi ]
-  then
-    echo ""
-  else
-    mkdir "$HOME"/wifi
-fi
-rfkill unblock wifi 
+[ -z $HOME/wifi ] && mkdir "$HOME"/wifi
+rfkill unblock wifi
 iw $DEVICE scan | grep SSID | awk '{print$2}' # bloated
-sleep 1 
+sleep 1
 echo -e \\n "Type an SSID"
 read SSID
-if [ -f $HOME/wifi/$SSID ]
-  then 
-    wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
-  else
+[ -z $HOME/wifi/$SSID ] && $wpas $DEVICE -c $HOME/wifi/$SSID
     echo "Type a password" 
     wpa_passphrase $SSID >> $HOME/wifi/$SSID 
     wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
-fi
-  dhclient $DEVICE
+ dhclient $DEVICE
