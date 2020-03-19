@@ -29,19 +29,16 @@
 #
 # dhclient $DEVICE 										# Obtain IP address by dhcp
 # 
-# ip addr show $DEVICE 										# show the IP obtained by dhcp
-#
-#=============================================================================================================================================
-#
-# Variables
+# ip addr show $DEVICE 									# show the IP obtained by dhcp
 
+# Variables
 DEVICE="$(iw dev | grep Interface | awk '{print$2}')"
 WIFI_STATUS="iw $DEVICE link"
 INTERNET_STATUS="$(cat "/sys/class/net/($DEVICE)/operstate")"
 SSID_LIST="iw ($DEVICE) scan | grep SSID | awk '{print$2}'"
 IP="ip addr | grep 192 | awk '{print$2}'|" # bloated
 wpas="wpa_supplicant -B -D wext -i"
-#=============================================================================================================================================
+
 [ -z $HOME/wifi ] && mkdir "$HOME"/wifi
 rfkill unblock wifi
 iw $DEVICE scan | grep SSID | awk '{print$2}' # bloated
@@ -49,7 +46,7 @@ sleep 1
 echo -e \\n "Type an SSID"
 read SSID
 [ -z $HOME/wifi/$SSID ] && $wpas $DEVICE -c $HOME/wifi/$SSID
-    echo "Type a password" 
-    wpa_passphrase $SSID >> $HOME/wifi/$SSID 
-    wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
- dhclient $DEVICE
+  echo "Type a password" 
+  wpa_passphrase $SSID >> $HOME/wifi/$SSID
+  wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+ dhclient
