@@ -48,5 +48,5 @@ read SSID
 [ -z $HOME/wifi/$SSID ] && $wpas $DEVICE -c $HOME/wifi/$SSID
   echo "Type a password" 
   wpa_passphrase $SSID >> $HOME/wifi/$SSID
-  wpa_supplicant -B -D wext -i $DEVICE -c $HOME/wifi/$SSID
+  wpas $DEVICE -c $HOME/wifi/$SSID
  dhclient
