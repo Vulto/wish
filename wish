@@ -2,25 +2,22 @@
 #
 # Name: WISH = Wifi Shell
 #
-# Description: This program allows you to connect to the wifi using iw, ip command and
-# wpa_ supplicant/wpa_passphrase into terminal.
-# 
+# Description: This script allows you to connect to the wifi.
 # Dependencies: iw , wpa_supplicant , dhclient
 #
-
 # Variables
-DEVICE="$(iw dev | grep Interface | awk '{print$2}')"
+device="$(iw dev | grep Interface | awk '{print$2}')"
 wpas="wpa_supplicant -B -D wext -i"
-
+netw="scan | grep SSID | awk '{print$2}"
 [ -z $HOME/wifi ] || mkdir "$HOME"/wifi
 rfkill unblock wifi
-iw $DEVICE scan | grep SSID | awk '{print$2}' # bloated
+iw $device $netw
   sleep 1
   echo -e \\n "Type an SSID"
-  read SSID
+  read ssid
 [ -z $HOME/wifi/$SSID ] || mkdir "$HOME/wifi" 
-  $wpas $DEVICE -c $HOME/wifi/$SSID
+  $wpas $device -c $HOME/wifi/$ssid
   echo "Type a password" 
-  wpa_passphrase $SSID >> $HOME/wifi/$SSID
-  $wpas $DEVICE -c $HOME/wifi/$SSID
+  wpa_passphrase $ssid >> $HOME/wifi/$ssid
+  $wpas $DEVICE -c $HOME/wifi/$ssid
  dhclient
