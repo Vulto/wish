@@ -4,7 +4,8 @@
 #
 # Description: This script allows you to connect to the wifi.
 # Dependencies: iw , wpa_supplicant , dhclient
-#
+clear
+[[ "$UID" -ne "0" ]] && printf " We need root permission to work. Sorry.  :(  "
 # Variables
 device="$(iw dev | grep Interface | awk '{print$2}')"
 wpas="wpa_supplicant -B -D wext -i"
