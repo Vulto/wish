@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Name: WISH = Wifi Shell
 #
@@ -9,13 +9,12 @@
 device="$(iw dev | grep Interface | awk '{print$2}')"
 wpas="wpa_supplicant -B -D wext -i"
 netw="scan | grep SSID | awk '{print$2}"
-[ -z $HOME/wifi ] || mkdir "$HOME"/wifi
+[[ !-e "$HOME/wifi" ]] &&  mkdir "$HOME"/wifi
 rfkill unblock wifi
 iw $device $netw
   sleep 1
   echo -e \\n "Type an SSID"
   read ssid
-[ -z $HOME/wifi/$SSID ] || mkdir $HOME/wifi
   $wpas $device -c $HOME/wifi/$ssid
   echo "Type a password" 
   wpa_passphrase $ssid >> $HOME/wifi/$ssid
