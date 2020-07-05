@@ -4,12 +4,15 @@
 #
 # Description: This script allows you to connect to the wifi.
 # Dependencies: iw , wpa_supplicant , dhclient
+#
 clear
 [[ "$UID" -ne "0" ]] && printf " We need root permission to work. Sorry.  :(  " ; exit 1
+
 # Variables
 device="$(iw dev | grep Interface | awk '{print$2}')"
 wpas="wpa_supplicant -B -D wext -i"
 netw="scan | grep SSID | awk '{print$2}"
+
 [[ !-e "$HOME/wifi" ]] &&  mkdir "$HOME"/wifi
 rfkill unblock wifi
 iw $device $netw
