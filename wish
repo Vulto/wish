@@ -20,4 +20,4 @@ iw $device $netw
   wpa_passphrase $ssid >> $HOME/wifi/$ssid
   $wpas $DEVICE -c $HOME/wifi/$ssid
  dhclient
-xsetroot -name "$(ip addr | grep -oEw '([[:digit:]]{3}.){3}[[:digit:]]{2}')"
+xsetroot -name "$(ip a | grep -oEw '([[:digit:]]{3}.){3}[[:digit:]]{2}')"
