@@ -1,26 +1,19 @@
 #!/usr/bin/env bash
 #
-# Name: WISH = Wifi Shell
-#
 # Description: This script allows you to connect to the wifi.
 # Dependencies: iw , wpa_supplicant , dhclient
 #
-clear
-[[ "$UID" -ne "0" ]] && printf " We need root permission to work. Sorry.  :(  " ; exit 1
-
+#[[ "$UID" -ne "0" ]] && printf " We need root permission to work. Sorry.  :(  " ; exit 1
+#
 # Variables
-device="$(iw dev | grep Interface | awk '{print$2}')"
-wpas="wpa_supplicant -B -D wext -i"
-netw="scan | grep SSID | awk '{print$2}"
+device="$(ls "/sys/class/net" | grep "wl")"
 
-[[ !-e "$HOME/wifi" ]] &&  mkdir "$HOME"/wifi
+#[[ !-e "$HOME/wifi" ]] &&  mkdir "$HOME"/wifi
+ip link set device up
 rfkill unblock wifi
-iw $device $netw
-  sleep 1
+iwlist $device scan | grep ESSID &&
   read -p "Type an SSID" ssid
-  $wpas $device -c $HOME/wifi/$ssid
-  echo "Type a password" 
-  wpa_passphrase $ssid >> $HOME/wifi/$ssid
-  $wpas $DEVICE -c $HOME/wifi/$ssid
- dhclient
-xsetroot -name "$(ip a | grep -oEw '([[:digit:]]{3}.){3}[[:digit:]]{2}')"
+  $wpa_passphrase $ssid -c $ssid > $ssid.conf
+  echo "Type a password"
+  wpa_supplicant-c $ssid.conf -i $device
+ 
