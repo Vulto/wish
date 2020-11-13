@@ -9,11 +9,11 @@
 device="$(ls "/sys/class/net" | grep "wl")"
 
 #[[ !-e "$HOME/wifi" ]] &&  mkdir "$HOME"/wifi
-ip link set device up
+ip link set $device up
 rfkill unblock wifi
 iwlist $device scan | grep ESSID &&
   read -p "Type an SSID" ssid
   $wpa_passphrase $ssid -c $ssid > $ssid.conf
   echo "Type a password"
-  wpa_supplicant-c $ssid.conf -i $device
+  wpa_supplicant -c $ssid.conf -i $device
  
