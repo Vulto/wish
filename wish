@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
-#
-# Description: This script allows you to connect to the wifi.
-# Dependencies: iw , wpa_supplicant , dhclient
-#
-#[[ "$UID" -ne "0" ]] && printf " We need root permission to work. Sorry.  :(  " ; exit 1
-#
-# Variables
-device="$(ls "/sys/class/net" | grep "wl")"
-
-#[[ !-e "$HOME/wifi" ]] &&  mkdir "$HOME"/wifi
+# Dependencies: iw , wpa_supplicant 
+ls "/sys/class/net"
+read -p "Choose your wifi device: "
+[ ! -e "$HOME/wifi" ] &&  mkdir "$HOME"/.config/wifi
 ip link set $device up
 rfkill unblock wifi
 iwlist $device scan | grep ESSID &&
   read -p "Type an wifi name (SSID): " ssid
-  wpa_passphrase $ssid > $ssid.conf
-  wpa_supplicant -c $ssid.conf -i $device
+  wpa_passphrase $ssid > $HOME/.config/wifi/$ssid.conf
+  wpa_supplicant -c $HOME/.config/wifi/$ssid.conf -i $device
+  sleep 2
+iwconfig $device
