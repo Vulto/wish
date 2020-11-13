@@ -13,7 +13,6 @@ ip link set $device up
 rfkill unblock wifi
 iwlist $device scan | grep ESSID &&
   read -p "Type an SSID" ssid
-  $wpa_passphrase $ssid -c $ssid > $ssid.conf
+  wpa_passphrase $ssid > $ssid.conf
   echo "Type a password"
   wpa_supplicant -c $ssid.conf -i $device
- 
